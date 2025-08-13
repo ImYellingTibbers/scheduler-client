@@ -132,3 +132,164 @@ main {
     ),
     #ef4444;
 }
+/* Toolbar + layout */
+.toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 0 16px;
+}
+.toolbar h2 {
+  margin: 0 8px;
+  font-weight: 600;
+}
+.layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Calendar */
+.calendar__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.calendar__weekday {
+  text-align: center;
+  color: #9fb3c8;
+  font-size: 12px;
+}
+
+.calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.day {
+  position: relative;
+  padding: 8px;
+  height: 90px;
+  text-align: left;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface, #161b22);
+  cursor: pointer;
+}
+.day:hover {
+  outline: 2px solid rgba(125, 211, 252, 0.4);
+}
+.day--faded {
+  opacity: 0.5;
+}
+.day--today {
+  box-shadow: inset 0 0 0 2px #7dd3fc;
+}
+.day--holiday {
+  background: linear-gradient(
+      0deg,
+      rgba(96, 165, 250, 0.15),
+      rgba(96, 165, 250, 0.15)
+    ),
+    var(--surface, #161b22);
+}
+.day--warn {
+  border-color: #f59e0b;
+}
+
+.day__date {
+  font-weight: 600;
+  font-size: 14px;
+}
+.day__badges {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #0f131a;
+  color: #cdd6e3;
+}
+.badge--info {
+  background: #0b2236;
+  border-color: #1e3a5f;
+  color: #9cc1ff;
+}
+.badge--warn {
+  background: #3a2a0b;
+  border-color: #7c5b12;
+  color: #ffd27a;
+}
+
+/* Details panel */
+.details {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  background: var(--panel);
+  height: 100%;
+}
+.details h3 {
+  margin-top: 0;
+}
+.details__holiday {
+  color: #9cc1ff;
+}
+.details__coverage {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 12px;
+  display: grid;
+  gap: 6px;
+}
+.details__coverage li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.chip {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #222a35;
+  border: 1px solid var(--border);
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dot--ok {
+  background: #22c55e;
+}
+.dot--warn {
+  background: #f59e0b;
+}
+
+.btn {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #1d2430;
+  color: var(--text);
+  cursor: pointer;
+}
+.btn--primary {
+  background: #21314a;
+}
