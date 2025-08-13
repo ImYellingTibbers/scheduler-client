@@ -1,12 +1,26 @@
-# React + Vite
+# Scheduler (Stage 1)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Hospital team scheduler (React + Vite) with holiday awareness, qualifications, availability templates (green/yellow/red), manual shift creation with validation, and coverage warnings.
 
-Currently, two official plugins are available:
+## Features (Stage 1)
+- Month calendar with **holiday badges** (Nager.Date API).
+- **Users**: qualifications for OR/Fluoro/Dexa, employee ID.
+- **Availability**: weekly 7×24 matrix (green/yellow/red) + per-date overrides.
+- **Shifts**: add/edit/delete; blocks **red** hours, requires **site qualification**, warns on **yellow**, blocks **double booking**.
+- **Coverage**: per-date/site required counts; calendar shows **Under** when not met.
+- **Responsive** layout; keyboard focus visible; semantic markup.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech
+- React (Vite), React Router
+- date-fns + date-fns-tz
+- Fetch API (no axios/jQuery)
 
-## Expanding the ESLint configuration
+## Third-party API
+- **Nager.Date** Public Holidays: `https://date.nager.at/api/v3/PublicHolidays/{year}/US`
+  - Called in `src/api/holidays.js` via `fetch().then(res => res.json()).catch()`.
+  - Results cached in app state/localStorage and used to flag dates in the calendar.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Run locally
+```bash
+npm i
+npm run dev
