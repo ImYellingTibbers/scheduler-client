@@ -1,8 +1,15 @@
+import { useState } from 'react';
 import { ymd, nice } from '../lib/time.js';
+import { useAppState } from '../state/AppState.jsx';
+import ShiftModal from './ShiftModal.jsx';
 
 export default function DayDetails({
   date, holidaysByDate, sites, coverageByDateSite, assignedByDateSite, shiftsForDate,
 }) {
+  const { actions } = useAppState();
+  const [showModal, setShowModal] = useState(false);
+  const [editShift, setEditShift] = useState(null);
+
   if (!date) return <aside className="details"><p>Select a day.</p></aside>;
   const key = ymd(date);
   const holidayName = holidaysByDate.get(key);
@@ -37,13 +44,26 @@ export default function DayDetails({
                 <strong>{sh.userName}</strong> <span className="chip">{sh.siteName}</span>
                 <time>{sh.start.slice(11,16)}–{sh.end.slice(11,16)}</time>
               </header>
+              <footer className="shift__foot">
+                <button className="btn" onClick={() => { setEditShift(sh); setShowModal(true); }}>Edit</button>
+                <button className="btn btn--ghost" onClick={() => actions.deleteShift(sh._id)}>Delete</button>
+              </footer>
             </article>
           ))
         )}
       </div>
 
-      {/* Next step will add a real modal */}
-      <button className="btn btn--primary" disabled title="Add Shift coming in next step">+ Add Shift</button>
+      <button className="btn btn--primary" onClick={() => { setEditShift(null); setShowModal(true); }}>
+        + Add Shift
+      </button>
+
+      {showModal && (
+        <ShiftModal
+          date={date}
+          existing={editShift}
+          onClose={() => { setShowModal(false); setEditShift(null); }}
+        />
+      )}
     </aside>
   );
 }
