@@ -1,16 +1,27 @@
-import { useState } from 'react';
-import { ymd, nice } from '../lib/time.js';
-import { useAppState } from '../state/AppState.jsx';
-import ShiftModal from './ShiftModal.jsx';
+import { useState } from "react";
+import { ymd, nice } from "../lib/time.js";
+import { useAppState } from "../state/AppState.jsx";
+import ShiftModal from "./ShiftModal.jsx";
+import CoverageEditor from "./CoverageEditor.jsx";
 
 export default function DayDetails({
-  date, holidaysByDate, sites, coverageByDateSite, assignedByDateSite, shiftsForDate,
+  date,
+  holidaysByDate,
+  sites,
+  coverageByDateSite,
+  assignedByDateSite,
+  shiftsForDate,
 }) {
   const { actions } = useAppState();
   const [showModal, setShowModal] = useState(false);
   const [editShift, setEditShift] = useState(null);
 
-  if (!date) return <aside className="details"><p>Select a day.</p></aside>;
+  if (!date)
+    return (
+      <aside className="details">
+        <p>Select a day.</p>
+      </aside>
+    );
   const key = ymd(date);
   const holidayName = holidaysByDate.get(key);
 
@@ -27,12 +38,16 @@ export default function DayDetails({
           return (
             <li key={s._id}>
               <span className="chip">{s.name}</span>
-              <strong>{have} / {req}</strong>
-              <span className={`dot ${ok ? 'dot--ok' : 'dot--warn'}`} />
+              <strong>
+                {have} / {req}
+              </strong>
+              <span className={`dot ${ok ? "dot--ok" : "dot--warn"}`} />
             </li>
           );
         })}
       </ul>
+
+      <CoverageEditor date={date} />
 
       <div className="details__list">
         {shiftsForDate.length === 0 ? (
@@ -41,19 +56,41 @@ export default function DayDetails({
           shiftsForDate.map((sh) => (
             <article key={sh._id} className="shift">
               <header className="shift__head">
-                <strong>{sh.userName}</strong> <span className="chip">{sh.siteName}</span>
-                <time>{sh.start.slice(11,16)}–{sh.end.slice(11,16)}</time>
+                <strong>{sh.userName}</strong>{" "}
+                <span className="chip">{sh.siteName}</span>
+                <time>
+                  {sh.start.slice(11, 16)}–{sh.end.slice(11, 16)}
+                </time>
               </header>
               <footer className="shift__foot">
-                <button className="btn" onClick={() => { setEditShift(sh); setShowModal(true); }}>Edit</button>
-                <button className="btn btn--ghost" onClick={() => actions.deleteShift(sh._id)}>Delete</button>
+                <button
+                  className="btn"
+                  onClick={() => {
+                    setEditShift(sh);
+                    setShowModal(true);
+                  }}
+                >
+                  Edit
+                </button>
+                <button
+                  className="btn btn--ghost"
+                  onClick={() => actions.deleteShift(sh._id)}
+                >
+                  Delete
+                </button>
               </footer>
             </article>
           ))
         )}
       </div>
 
-      <button className="btn btn--primary" onClick={() => { setEditShift(null); setShowModal(true); }}>
+      <button
+        className="btn btn--primary"
+        onClick={() => {
+          setEditShift(null);
+          setShowModal(true);
+        }}
+      >
         + Add Shift
       </button>
 
@@ -61,7 +98,10 @@ export default function DayDetails({
         <ShiftModal
           date={date}
           existing={editShift}
-          onClose={() => { setShowModal(false); setEditShift(null); }}
+          onClose={() => {
+            setShowModal(false);
+            setEditShift(null);
+          }}
         />
       )}
     </aside>

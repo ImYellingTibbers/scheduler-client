@@ -362,3 +362,28 @@ main {
   gap: 8px;
   margin-top: 6px;
 }
+.coverage {
+  margin: 10px 0 14px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.coverage h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: #9fb3c8;
+}
+.coverage__rows {
+  display: grid;
+  gap: 6px;
+}
+.coverage__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.coverage__row input {
+  width: 80px;
+  padding: 6px 8px;
+}

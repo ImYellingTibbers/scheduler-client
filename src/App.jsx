@@ -20,7 +20,7 @@ export default function App() {
     <AppStateProvider holidaysFromApi={holidays}>
       <div className="app">
         <header className="appbar">
-          <h1 className="appbar__brand">Scheduler</h1>
+          <h1 className="appbar__brand">Megan's Awesome-Perfectly-Functioning-With-No-Problems-Whatsoever Scheduler</h1>
           <nav className="appbar__nav">
             <Link to="/">Schedule</Link>
             <Link to="/settings">Settings</Link>
