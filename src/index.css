@@ -33,3 +33,102 @@ main {
   max-width: 960px;
   margin: 0 auto;
 }
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+}
+.tbl th,
+.tbl td {
+  border-bottom: 1px solid var(--border);
+  padding: 8px;
+  text-align: left;
+}
+
+.form .row {
+  display: flex;
+  gap: 12px;
+  margin: 8px 0;
+}
+.form input {
+  padding: 6px 8px;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+}
+.list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.avail {
+  margin-top: 16px;
+}
+.avail__legend {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.legend {
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+.legend--green {
+  background: #1a3d29;
+}
+.legend--yellow {
+  background: #3d341a;
+}
+.legend--red {
+  background: #3d1a1a;
+}
+
+.avail__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.avail__col {
+  display: grid;
+  grid-template-rows: auto repeat(24, 18px);
+  gap: 3px;
+}
+.avail__daylabel {
+  font-size: 12px;
+  color: #9fb3c8;
+  text-align: center;
+}
+.avail__cell {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.avail--green {
+  background: #22c55e;
+}
+.avail--yellow {
+  background: repeating-linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0.15) 0 6px,
+      transparent 6px 12px
+    ),
+    #f59e0b;
+}
+.avail--red {
+  background: repeating-linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.2) 0 6px,
+      transparent 6px 12px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(0, 0, 0, 0.2) 0 6px,
+      transparent 6px 12px
+    ),
+    #ef4444;
+}
