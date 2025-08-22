@@ -9,6 +9,7 @@ import {
 } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
 import { addHours } from "date-fns";
+import { eachDayOfInterval } from "date-fns";
 
 export const TZ = "America/Denver";
 
@@ -48,4 +49,9 @@ export function overlaps(aStartISO, aEndISO, bStartISO, bEndISO) {
   const bStart = new Date(bStartISO).getTime();
   const bEnd = new Date(bEndISO).getTime();
   return Math.max(aStart, bStart) < Math.min(aEnd, bEnd);
+}
+
+export function ymdListFromRange(startDate, endDate) {
+  const days = eachDayOfInterval({ start: startDate, end: endDate });
+  return days.map((d) => ymd(d));
 }

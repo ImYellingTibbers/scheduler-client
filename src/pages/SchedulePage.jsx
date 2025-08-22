@@ -24,6 +24,8 @@ export default function SchedulePage() {
     return m;
   }, [state.coverage]);
 
+  const coverageDefaults = state.coverageDefaults || {};
+
   const assignedByDateSite = useMemo(() => {
     const m = new Map();
     for (const sh of state.shifts) {
@@ -84,6 +86,7 @@ export default function SchedulePage() {
           holidaysByDate={holidaysByDate}
           coverageByDateSite={coverageByDateSite}
           assignedByDateSite={assignedByDateSite}
+          coverageDefaults={coverageDefaults}
           sites={state.sites}
           onSelectDate={(d) => setSelectedDate(d)}
         />
@@ -94,6 +97,7 @@ export default function SchedulePage() {
           sites={state.sites}
           coverageByDateSite={coverageByDateSite}
           assignedByDateSite={assignedByDateSite}
+          coverageDefaults={coverageDefaults}
           shiftsForDate={shiftsForSelected}
         />
       </div>

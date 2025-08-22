@@ -42,3 +42,11 @@
   gap: 8px;
   margin-top: 6px;
 }
+.btn--edit {
+  margin-top: 10px;
+}
+.details__legend {
+  color: #9fb3c8;
+  font-size: 12px;
+  margin: -6px 0 8px;
+}

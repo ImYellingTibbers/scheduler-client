@@ -6,6 +6,7 @@ export default function CalendarGrid({
   holidaysByDate, // Map<string, string> date->holiday name
   coverageByDateSite, // Map<`${date}|${siteId}`, requiredCount>
   assignedByDateSite, // Map<`${date}|${siteId}`, count>
+  coverageDefaults, // Site Defaults
   sites, // [{_id,name}]
   onSelectDate, // (date: Date) => void
 }) {
@@ -36,6 +37,7 @@ export default function CalendarGrid({
           for (const s of sites) {
             const req = coverageByDateSite.get(`${dateKey}|${s._id}`) || 0;
             const have = assignedByDateSite.get(`${dateKey}|${s._id}`) || 0;
+            const required = req ?? coverageDefaults[s._id] ?? 0;
             shortfall += Math.max(0, req - have);
           }
           const understaffed = shortfall > 0;

@@ -45,6 +45,8 @@ export default function SettingsPage() {
 
       <h3>Sites</h3>
       <SitesTable />
+
+      <CoverageDefaults />
       <p style={{ color: "#9fb3c8", fontSize: 14 }}>
         Default sites: General (everyone), OR, Fluoro, Dexa (require
         qualifications).

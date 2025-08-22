@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ymd, nice } from "../lib/time.js";
 import { useAppState } from "../state/AppState.jsx";
 import ShiftModal from "./ShiftModal.jsx";
-import CoverageEditor from "./CoverageEditor.jsx";
+import BulkCoverageModal from "./BulkCoverageModal.jsx";
 
 export default function DayDetails({
   date,
@@ -10,18 +10,22 @@ export default function DayDetails({
   sites,
   coverageByDateSite,
   assignedByDateSite,
+  coverageDefaults,
   shiftsForDate,
 }) {
   const { actions } = useAppState();
   const [showModal, setShowModal] = useState(false);
   const [editShift, setEditShift] = useState(null);
+  const [showBulk, setShowBulk] = useState(false);
 
-  if (!date)
+  if (!date) {
     return (
       <aside className="details">
         <p>Select a day.</p>
       </aside>
     );
+  }
+
   const key = ymd(date);
   const holidayName = holidaysByDate.get(key);
 
@@ -32,9 +36,12 @@ export default function DayDetails({
 
       <ul className="details__coverage">
         {sites.map((s) => {
-          const req = coverageByDateSite.get(`${key}|${s._id}`) || 0;
+          const override = coverageByDateSite.get(`${key}|${s._id}`);
+          const required = override ?? coverageDefaults?.[s._id] ?? 0;
           const have = assignedByDateSite.get(`${key}|${s._id}`) || 0;
-          const ok = have >= req;
+          const ok = have >= required;
+          const isOverride = override != null;
+
           return (
             <li key={s._id}>
               <span className="details__coverage-ok">
@@ -42,15 +49,37 @@ export default function DayDetails({
                 <span className="chip">{s.name}</span>
               </span>
 
-              <strong>
-                {have} / {req}
+              {/* italicize overridden defaults */}
+              <strong
+                style={{ fontStyle: isOverride ? "italic" : "normal" }}
+                title={isOverride ? "Edited (override)" : "Using default"}
+              >
+                {have} / {required}
               </strong>
             </li>
           );
         })}
       </ul>
+      <p className="details__legend">
+        <em>Italic</em> = edited for this date; normal = default.
+      </p>
 
-      <CoverageEditor date={date} />
+      {/* Bulk editor (range + extra dates) */}
+      <button
+        type="button"
+        className="btn btn--edit-coverage"
+        style={{ marginBottom: 8 }}
+        onClick={() => setShowBulk(true)}
+      >
+        Edit Coverage Needs
+      </button>
+      {showBulk && (
+        <BulkCoverageModal
+          startDate={date}
+          endDate={date}
+          onClose={() => setShowBulk(false)}
+        />
+      )}
 
       <div className="details__list">
         {shiftsForDate.length === 0 ? (

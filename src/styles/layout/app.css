@@ -13,6 +13,10 @@
 .appbar__brand {
   margin: 0;
   font-size: var(--fs-lg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: clamp(160px, 40vw, 520px);
 }
 .appbar__nav {
   display: flex;

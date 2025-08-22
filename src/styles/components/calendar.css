@@ -51,6 +51,7 @@
 .day__date {
   font-weight: 600;
   font-size: 14px;
+  color: rgba(255, 255, 255, .75);
 }
 .day__today {
   position: absolute;

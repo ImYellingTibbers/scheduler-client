@@ -41,6 +41,7 @@ const initialData = {
   shifts: [], // {_id,userId,siteId,start,end,status}
   holidays: [], // from API
   timezone: "America/Denver",
+  coverageDefaults: { general: 1, or: 2, fluoro: 3, dexa: 4 },
 };
 
 function normalizeTemplate() {
@@ -94,6 +95,40 @@ export function AppStateProvider({ children, holidaysFromApi = [] }) {
             },
           ],
         }));
+      },
+
+      setCoverageDefault(siteId, requiredCount) {
+        setState((s) => ({
+          ...s,
+          coverageDefaults: {
+            ...s.coverageDefaults,
+            [siteId]: Number(requiredCount) || 0,
+          },
+        }));
+      },
+
+      setCoverageForDates(dates, siteId, requiredCount) {
+        setState((s) => {
+          const next = [...s.coverage];
+          for (const d of dates) {
+            const i = next.findIndex(
+              (c) => c.date === d && c.siteId === siteId
+            );
+            if (i >= 0)
+              next[i] = {
+                ...next[i],
+                requiredCount: Number(requiredCount) || 0,
+              };
+            else
+              next.push({
+                _id: makeId("cov"),
+                date: d,
+                siteId,
+                requiredCount: Number(requiredCount) || 0,
+              });
+          }
+          return { ...s, coverage: next };
+        });
       },
 
       updateUser(id, patch) {
