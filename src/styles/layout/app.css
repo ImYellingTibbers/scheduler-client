@@ -1,0 +1,146 @@
+.appbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.appbar__brand {
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+.appbar__nav {
+  display: flex;
+  gap: 12px;
+}
+.appbar__nav a {
+  color: #9fb3c8;
+  text-decoration: none;
+}
+.appbar__nav a:hover {
+  color: aliceblue;
+}
+main {
+  padding: 16px;
+}
+.page {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 0 16px;
+  gap: 25px;
+}
+.toolbar h2 {
+  margin: 0;
+  min-width: 200px;
+  text-align: center;
+  font-weight: 600;
+  font-size: var(--fs-xl);
+}
+.toolbar__button {
+  height: 24px;
+  width: 24px;
+}
+/* .toolbar__button.previous {
+  background-color: red;
+}
+.toolbar__button.next {
+  background-color: blue;
+} */
+.layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Buttons, chips, alerts */
+.btn {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #1d2430;
+  color: var(--text);
+  cursor: pointer;
+}
+.btn--primary {
+  background: #21314a;
+}
+.btn--ghost {
+  background: transparent;
+}
+.chip {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #222a35;
+  border: 1px solid var(--border);
+}
+.alert {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin: 8px 0;
+  font-size: 14px;
+}
+.alert--warn {
+  background: #3a2a0b;
+  border-color: #7c5b12;
+  color: #ffd27a;
+}
+.alert--error {
+  background: #3d1a1a;
+  border-color: #7c2b2b;
+  color: #ffb4b4;
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dot--ok {
+  background: var(--ok);
+}
+.dot--warn {
+  background: var(--warn);
+}
+
+/* Forms & tables */
+.form .row {
+  display: flex;
+  gap: 12px;
+  margin: 8px 0;
+}
+.form input,
+.form select {
+  padding: 6px 8px;
+  background: #0f131a;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+}
+.tbl th,
+.tbl td {
+  border-bottom: 1px solid var(--border);
+  padding: 8px;
+  text-align: left;
+}

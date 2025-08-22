@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
-import { useAppState } from '../state/AppState.jsx';
-import { ymd } from '../lib/time.js';
+import { useMemo } from "react";
+import { useAppState } from "../state/AppState.jsx";
+import { ymd } from "../lib/time.js";
 
 export default function CoverageEditor({ date }) {
   const { state, actions } = useAppState();
@@ -30,7 +30,9 @@ export default function CoverageEditor({ date }) {
                 type="number"
                 min="0"
                 value={val}
-                onChange={(e) => actions.setCoverage(key, s._id, Number(e.target.value) || 0)}
+                onChange={(e) =>
+                  actions.setCoverage(key, s._id, Number(e.target.value) || 0)
+                }
               />
             </label>
           );

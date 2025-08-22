@@ -1,4 +1,4 @@
-const KEY = 'scheduler_state_v1';
+const KEY = "scheduler_state_v1";
 
 export function loadState() {
   try {

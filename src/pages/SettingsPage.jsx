@@ -1,9 +1,9 @@
-import { useMemo, useState } from 'react';
-import { useAppState } from '../state/AppState.jsx';
-import UsersTable from '../components/UsersTable.jsx';
-import UserForm from '../components/UserForm.jsx';
-import SitesTable from '../components/SitesTable.jsx';
-import AvailabilityMatrix from '../components/AvailabilityMatrix.jsx';
+import { useMemo, useState } from "react";
+import { useAppState } from "../state/AppState.jsx";
+import UsersTable from "../components/UsersTable.jsx";
+import UserForm from "../components/UserForm.jsx";
+import SitesTable from "../components/SitesTable.jsx";
+import AvailabilityMatrix from "../components/AvailabilityMatrix.jsx";
 
 export default function SettingsPage() {
   const { state } = useAppState();
@@ -25,21 +25,29 @@ export default function SettingsPage() {
         <div className="form" style={{ marginTop: 16 }}>
           <label>
             Edit availability for:
-            <select value={selectedUserId || ''} onChange={(e)=>setSelectedUserId(e.target.value)}>
+            <select
+              value={selectedUserId || ""}
+              onChange={(e) => setSelectedUserId(e.target.value)}
+            >
               <option value="">— Select user —</option>
-              {usersOptions.map((u)=> <option key={u.id} value={u.id}>{u.name}</option>)}
+              {usersOptions.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.name}
+                </option>
+              ))}
             </select>
           </label>
         </div>
       )}
       {selectedUserId && <AvailabilityMatrix userId={selectedUserId} />}
 
-      <hr style={{ borderColor: 'var(--border)', margin: '24px 0' }} />
+      <hr style={{ borderColor: "var(--border)", margin: "24px 0" }} />
 
       <h3>Sites</h3>
       <SitesTable />
-      <p style={{ color: '#9fb3c8', fontSize: 14 }}>
-        Default sites: General (everyone), OR, Fluoro, Dexa (require qualifications).
+      <p style={{ color: "#9fb3c8", fontSize: 14 }}>
+        Default sites: General (everyone), OR, Fluoro, Dexa (require
+        qualifications).
       </p>
     </section>
   );

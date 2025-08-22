@@ -37,11 +37,14 @@ export default function DayDetails({
           const ok = have >= req;
           return (
             <li key={s._id}>
-              <span className="chip">{s.name}</span>
+              <span className="details__coverage-ok">
+                <span className={`dot ${ok ? "dot--ok" : "dot--warn"}`} />
+                <span className="chip">{s.name}</span>
+              </span>
+
               <strong>
                 {have} / {req}
               </strong>
-              <span className={`dot ${ok ? "dot--ok" : "dot--warn"}`} />
             </li>
           );
         })}

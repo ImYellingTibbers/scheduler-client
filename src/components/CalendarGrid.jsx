@@ -2,6 +2,7 @@ import { monthGrid, ymd, isSameMonthLocal, isTodayLocal } from "../lib/time.js";
 
 export default function CalendarGrid({
   monthDate, // Date for the visible month
+  selectedDate, // Chosen date
   holidaysByDate, // Map<string, string> date->holiday name
   coverageByDateSite, // Map<`${date}|${siteId}`, requiredCount>
   assignedByDateSite, // Map<`${date}|${siteId}`, count>
@@ -27,6 +28,10 @@ export default function CalendarGrid({
           const isCurMonth = isSameMonthLocal(d, monthDate);
           const holidayName = holidaysByDate.get(dateKey);
           // compute total shortfall across specialized sites
+
+          const selected = selectedDate && ymd(selectedDate) === dateKey;
+          const isToday = isTodayLocal(d);
+
           let shortfall = 0;
           for (const s of sites) {
             const req = coverageByDateSite.get(`${dateKey}|${s._id}`) || 0;
@@ -41,6 +46,7 @@ export default function CalendarGrid({
             isTodayLocal(d) ? "day--today" : "",
             holidayName ? "day--holiday" : "",
             understaffed ? "day--warn" : "",
+            selected ? "day--selected" : "",
           ].join(" ");
 
           return (
@@ -51,8 +57,11 @@ export default function CalendarGrid({
               aria-label={`${dateKey}${holidayName ? " — " + holidayName : ""}${
                 understaffed ? " — understaffed" : ""
               }`}
+              aria-selected={selected ? "true" : "false"}
+              aria-current={isToday ? "date" : undefined}
             >
               <span className="day__date">{d.getDate()}</span>
+              {isToday && <span className="day__today" aria-hidden="true" />}
               <div className="day__badges">
                 {holidayName && (
                   <span className="badge badge--info">Holiday</span>
