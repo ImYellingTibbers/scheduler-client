@@ -90,7 +90,8 @@ export function AppStateProvider({ children, holidaysFromApi = [] }) {
                 Fluoro: !!user.qualFluoro,
                 Dexa: !!user.qualDexa,
               },
-              availabilityTemplate: normalizeTemplate(),
+              availabilityTemplate:
+                user.availabilityTemplate || normalizeTemplate(),
               overrides: [],
             },
           ],
