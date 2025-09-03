@@ -4,6 +4,7 @@ import UsersTable from "../components/UsersTable.jsx";
 import UserForm from "../components/UserForm.jsx";
 import SitesTable from "../components/SitesTable.jsx";
 import AvailabilityMatrix from "../components/AvailabilityMatrix.jsx";
+import CoverageDefaults from "../components/CoverageDefaults.jsx";
 
 export default function SettingsPage() {
   const { state } = useAppState();
