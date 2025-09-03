@@ -6,7 +6,6 @@ import { ymd, dayKey } from "../lib/time.js";
 
 const AppState = createContext(null);
 
-/* ---------- Availability helpers (exported) ---------- */
 export function availabilityAt(user, dateObj) {
   // date-specific override?
   const d = ymd(dateObj);
@@ -27,33 +26,32 @@ export function availabilityForSpan(user, startISO, hours) {
   }
   return seen;
 }
-/* ----------------------------------------------------- */
 
 const initialData = {
-  users: [], // {_id,name,employeeId,qualifications:{OR,Fluoro,Dexa}, availabilityTemplate:{mon..sun:[24]}, overrides:[{date,status}]}
+  users: [],
   sites: [
     { _id: "general", name: "General" },
     { _id: "or", name: "OR" },
     { _id: "fluoro", name: "Fluoro" },
     { _id: "dexa", name: "Dexa" },
   ],
-  coverage: [], // {_id,date:'YYYY-MM-DD',siteId,requiredCount}
-  shifts: [], // {_id,userId,siteId,start,end,status}
-  holidays: [], // from API
+  coverage: [],
+  shifts: [],
+  holidays: [],
   timezone: "America/Denver",
   coverageDefaults: { general: 1, or: 2, fluoro: 3, dexa: 4 },
 };
 
 function normalizeTemplate() {
-  const blank = Array(24).fill("red"); // default to "cannot"
+  const base = Array(24).fill("yellow");
   return {
-    mon: [...blank],
-    tue: [...blank],
-    wed: [...blank],
-    thu: [...blank],
-    fri: [...blank],
-    sat: [...blank],
-    sun: [...blank],
+    mon: [...base],
+    tue: [...base],
+    wed: [...base],
+    thu: [...base],
+    fri: [...base],
+    sat: [...base],
+    sun: [...base],
   };
 }
 
