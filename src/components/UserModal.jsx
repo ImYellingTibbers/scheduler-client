@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useAppState } from "../state/AppState.jsx";
 
 function makeTemplateFourByTen() {
@@ -12,11 +12,25 @@ function makeTemplateFourByTen() {
     sat: yellow(),
     sun: yellow(),
   };
+  // Mon–Thu 06:00–16:00 (10 hours: 6..15) as green (preferred)
+  for (const d of ["mon", "tue", "wed", "thu"]) {
+    for (let h = 6; h < 16; h += 1) tpl[d][h] = "green";
+  }
   return tpl;
 }
 
 export default function UserModal({ onClose }) {
-  const { actions } = useAppState();
+  const { state, actions } = useAppState();
+
+  // ESC to close
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
   const [name, setName] = useState("");
   const [empId, setEmpId] = useState("");
   const [qualOR, setQualOR] = useState(false);
@@ -24,15 +38,23 @@ export default function UserModal({ onClose }) {
   const [qualDexa, setQualDexa] = useState(false);
   const [useDefaultAvail, setUseDefaultAvail] = useState(true);
 
-  const canSave = name.trim().length > 0;
+  const empIdTrim = (empId || "").trim();
+  const duplicateId = useMemo(() => {
+    if (!empIdTrim) return false;
+    return state.users.some(
+      (u) =>
+        (u.employeeId || "").trim().toLowerCase() === empIdTrim.toLowerCase()
+    );
+  }, [state.users, empIdTrim]);
+
+  const canSave = name.trim().length > 0 && !duplicateId;
 
   function submit(e) {
     e.preventDefault();
     if (!canSave) return;
-
     actions.addUser({
       name,
-      employeeId: empId,
+      employeeId: empIdTrim, // <-- use trimmed value
       qualOR,
       qualFluoro,
       qualDexa,
@@ -66,12 +88,18 @@ export default function UserModal({ onClose }) {
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                autoFocus
                 required
               />
             </label>
             <label style={{ width: 180 }}>
               Employee ID
-              <input value={empId} onChange={(e) => setEmpId(e.target.value)} />
+              <input
+                value={empId}
+                onChange={(e) => setEmpId(e.target.value)}
+                aria-invalid={duplicateId ? "true" : "false"}
+                title="Must be unique"
+              />
             </label>
           </div>
 
@@ -111,6 +139,12 @@ export default function UserModal({ onClose }) {
             Set basic availability to <strong>Mon–Thu 06:00–16:00</strong>{" "}
             (4×10)
           </label>
+
+          {duplicateId && (
+            <div className="alert alert--error" style={{ marginTop: 8 }}>
+              Employee ID “{empIdTrim}” already exists.
+            </div>
+          )}
 
           <div className="modal__actions">
             <button type="button" className="btn" onClick={onClose}>
