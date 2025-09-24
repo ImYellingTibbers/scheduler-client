@@ -2,153 +2,115 @@ export default function AboutPage() {
   const year = new Date().getFullYear();
 
   return (
-    <section className="page page--about">
-      <h2>
-        About this project <span className="chip">Stage 1</span>
-      </h2>
+    <section className="page">
+      <h2>About</h2>
 
       <p>
-        Scheduler is a lightweight staffing tool for Megan’s team. It lets you
-        manage people, their qualifications and availability, add shifts with
-        guardrails, and spot understaffed days at a glance. U.S. public holidays
-        are pulled from a third-party API to help planning.
+        This app is a scheduling tool for a small hospital team. It lets a
+        scheduler plan coverage by day and location, enforce basic constraints,
+        and persist everything locally. A public-holidays API is used to surface
+        holiday context while planning. Stage 2/3 will add a backend, auth, and
+        automation.
       </p>
 
-      <h3>What’s implemented in Stage 1</h3>
+      <h3>What it does (Stage 1)</h3>
       <ul>
         <li>
-          Month calendar with <em>Holiday</em> badges (Nager.Date API).
-        </li>
-        <li>People &amp; qualifications (General, OR, Fluoro, Dexa).</li>
-        <li>
-          Weekly availability template (green / yellow / red) + per-date
-          overrides.
+          <strong>Calendar + day panel.</strong> Click a date to view/edit
+          shifts and coverage. Holiday names appear for that day.
         </li>
         <li>
-          Shifts: add / edit / delete with validation:
-          <ul>
-            <li>Blocks red (cannot work) hours.</li>
-            <li>Warns on yellow (can work) hours.</li>
-            <li>Requires site qualification for OR/Fluoro/Dexa.</li>
-            <li>
-              Prevents double-booking (overlapping shifts for the same person).
-            </li>
-          </ul>
+          <strong>Shifts with validation.</strong> Add/edit/delete shifts.
+          Blocks double-booking per user, warns on “can work” (yellow), and
+          blocks “cannot” (red). Enforces qualifications per site.
         </li>
         <li>
-          Coverage needs: per-site defaults + per-date overrides via bulk
-          editor.
+          <strong>Availability editor (30-minute slots).</strong> Paint
+          Preferred / Can work / Cannot across a weekly grid; drag or click to
+          fill. Default preset for new users: Mon–Thu 06:00–16:30 (4×10.5).
         </li>
-        <li>“Under” indicator on days where required coverage isn’t met.</li>
-        <li>Responsive layout and visible keyboard focus rings.</li>
-        <li>Local persistence (no backend yet) for fast testing.</li>
+        <li>
+          <strong>Sites & coverage.</strong> Manage sites (seeded:
+          General/OR/Fluoro/Dexa). Set coverage <em>defaults</em> per site and
+          create per-date <em>overrides</em> (inline or via bulk editor for
+          ranges/extra dates). Day panel shows “have / required” (italic =
+          override).
+        </li>
+        <li>
+          <strong>User management.</strong> Add with preset, duplicate Employee
+          ID guard, delete (with confirm), and <em>Edit qualifications</em>{" "}
+          (toggle OR/Fluoro/Dexa).
+        </li>
+        <li>
+          <strong>Persistence.</strong> All data is saved to the browser’s
+          localStorage. Time zone fixed to <code>America/Denver</code>.
+        </li>
+        <li>
+          <strong>API integration.</strong> Public holidays fetched from the
+          Nager.Date “Public Holidays” API and cached client-side.
+        </li>
       </ul>
 
-      <h3>How to use</h3>
-      <ol>
-        <li>
-          <strong>Settings → People:</strong> add team members and mark
-          qualifications.
-        </li>
-        <li>
-          <strong>Settings → People:</strong> set weekly availability (click to
-          cycle green → yellow → red).
-        </li>
-        <li>
-          <strong>Schedule:</strong> pick a day and click{" "}
-          <em>Edit coverage needs…</em> to set defaults/overrides for a range.
-        </li>
-        <li>
-          <strong>Schedule:</strong> click a day → <em>+ Add Shift</em> to
-          assign staff. Validation prevents conflicts.
-        </li>
-      </ol>
-
-      <h3>Tech stack</h3>
+      <h3>Scheduling rules implemented</h3>
       <ul>
-        <li>React (Vite) + React Router</li>
-        <li>date-fns / date-fns-tz for time &amp; formatting</li>
-        <li>Public Holidays via Nager.Date JSON API</li>
-        <li>Deployed to GitHub Pages</li>
+        <li>No overlapping shifts for the same user.</li>
+        <li>
+          Availability: <strong>green</strong> = preferred,{" "}
+          <strong>yellow</strong> = can work (warn), <strong>red</strong> =
+          cannot (block). Resolution: 30 minutes.
+        </li>
+        <li>
+          Site qualifications: OR, Fluoro, and Dexa require explicit user
+          qualification; General is open to all.
+        </li>
       </ul>
 
       <h3>Data model (client-side)</h3>
-      <table className="tbl">
-        <thead>
-          <tr>
-            <th>Entity</th>
-            <th>Shape</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <code>user</code>
-            </td>
-            <td>
-              <code>{`{ _id, name, employeeId, qualifications:{OR,Fluoro,Dexa}, availabilityTemplate:{mon..sun:[24]}, overrides:[{date,status}] }`}</code>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <code>shift</code>
-            </td>
-            <td>
-              <code>{`{ _id, userId, siteId, start: ISO, end: ISO, status }`}</code>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <code>coverage</code>
-            </td>
-            <td>
-              <code>{`{ _id, date:'YYYY-MM-DD', siteId, requiredCount }`}</code>{" "}
-              (overrides)
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <code>coverageDefaults</code>
-            </td>
-            <td>
-              <code>{`{ general, or, fluoro, dexa }`}</code> (fallbacks)
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <dl>
+        <dt>User</dt>
+        <dd>
+          <code>
+            &#123; _id, name, employeeId, qualifications: &#123;OR, Fluoro,
+            Dexa&#125;, availabilityTemplate: mon..sun[48], overrides:
+            [&#123;date,status&#125;] &#125;
+          </code>
+        </dd>
+        <dt>Site</dt>
+        <dd>
+          <code>&#123; _id, name &#125;</code>
+        </dd>
+        <dt>Coverage</dt>
+        <dd>
+          <code>&#123; _id, date, siteId, requiredCount &#125;</code>
+        </dd>
+        <dt>Shift</dt>
+        <dd>
+          <code>&#123; _id, userId, siteId, start, end, status &#125;</code>
+        </dd>
+      </dl>
 
-      <h3>Privacy & data</h3>
-      <div className="alert">
-        No backend in Stage 1. Data is stored in <strong>localStorage</strong>{" "}
-        on this device only. The app uses names and an optional employee ID—no
-        PII like DOB or SSN.
-      </div>
-
-      <h3>Roadmap</h3>
+      <h3>Tech</h3>
       <ul>
-        <li>
-          <strong>Stage 2 (Backend):</strong> Express + DB, server-side
-          validation, REST API.
-        </li>
-        <li>
-          <strong>Stage 3 (Auth):</strong> JWT login, protected routes, replace
-          localStorage with API calls.
-        </li>
-        <li>
-          <strong>Automation (post-S3):</strong> constraint-based
-          auto-scheduling using availability, quals, and coverage.
-        </li>
+        <li>React + Vite, React Router, date-fns</li>
+        <li>LocalStorage for persistence</li>
+        <li>Nager.Date Public Holidays API</li>
       </ul>
 
-      <h3>Licenses & credits</h3>
-      <ul>
-        <li>Holidays data: Nager.Date.</li>
-        <li>Inter font: SIL Open Font License.</li>
-      </ul>
-
-      <p style={{ color: "#9fb3c8", fontSize: 12, marginTop: 12 }}>
-        © {year} Scheduler. Built for the TripleTen final project.
+      <h3>Privacy</h3>
+      <p>
+        No PHI is stored. The app keeps names and optional employee IDs only,
+        and all data stays in the browser unless exported in later stages.
       </p>
+
+      <h3>Limitations / next steps</h3>
+      <ul>
+        <li>No backend or authentication yet (planned Stage 2/3).</li>
+        <li>Single time zone; DST/UTC edge cases not handled.</li>
+        <li>
+          Automation (auto-assigner), Slack/ICS export, and templates are
+          planned for later stages.
+        </li>
+      </ul>
     </section>
   );
 }
