@@ -142,6 +142,24 @@ main {
   text-align: left;
 }
 
+.tbl__qual {
+  text-align: center;
+  width: 72px;
+}
+
+.tbl__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  white-space: nowrap;
+}
+
+.tbl__empty {
+  padding: 12px;
+  text-align: center;
+  color: #9fb3c8;
+}
+
 input[aria-invalid="true"] {
   border-color: #7c2b2b;
 }

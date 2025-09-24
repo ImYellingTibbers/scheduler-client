@@ -64,6 +64,27 @@ export function AppStateProvider({ children, holidaysFromApi = [] }) {
   );
 
   useEffect(() => {
+    // ensure core sites exist with their canonical IDs
+    setState((s) => {
+      const core = [
+        { _id: "general", name: "General" },
+        { _id: "or", name: "OR" },
+        { _id: "fluoro", name: "Fluoro" },
+        { _id: "dexa", name: "Dexa" },
+      ];
+      let changed = false;
+      let sites = s.sites || [];
+      for (const c of core) {
+        if (!sites.some((x) => x._id === c._id)) {
+          sites = [...sites, c];
+          changed = true;
+        }
+      }
+      return changed ? { ...s, sites } : s;
+    });
+  }, []);
+
+  useEffect(() => {
     setState((s) => {
       if (!s?.users?.length) return s;
       let changed = false;
