@@ -65,13 +65,7 @@ main {
   grid-template-columns: 2fr 1fr;
   gap: 16px;
 }
-@media (max-width: 900px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-}
 
-/* Buttons, chips, alerts */
 .btn {
   padding: 8px 12px;
   border: 1px solid var(--border);
@@ -147,4 +141,14 @@ main {
   border-bottom: 1px solid var(--border);
   padding: 8px;
   text-align: left;
+}
+
+input[aria-invalid="true"] {
+  border-color: #7c2b2b;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
 }

@@ -54,7 +54,7 @@ export default function UserModal({ onClose }) {
     if (!canSave) return;
     actions.addUser({
       name,
-      employeeId: empIdTrim, // <-- use trimmed value
+      employeeId: empIdTrim,
       qualOR,
       qualFluoro,
       qualDexa,

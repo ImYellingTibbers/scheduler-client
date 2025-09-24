@@ -15,15 +15,6 @@ export default function SitesTable() {
           setName("");
         }}
       >
-        <label>
-          New site{" "}
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="e.g., ICU"
-          />
-        </label>
-        <button type="submit">Add site</button>
       </form>
       <ul className="list">
         {state.sites.map((s) => (
@@ -35,6 +26,15 @@ export default function SitesTable() {
           </li>
         ))}
       </ul>
+      <label>
+          New site{" "}
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="e.g., ICU"
+          />
+        </label>
+        <button type="submit">Add site</button>
     </section>
   );
 }

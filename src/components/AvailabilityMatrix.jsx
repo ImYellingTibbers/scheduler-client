@@ -71,7 +71,7 @@ export default function AvailabilityMatrix({ user }) {
         <div className="avail__hours">
           <div />
           {/* header spacer */}
-          {Array.from({ length: 24 }, (_, h) => (
+          {Array.from({ length: 25 }, (_, h) => (
             <div key={h} className="avail__hour" aria-hidden="true">
               {hourLabel(h)}
             </div>

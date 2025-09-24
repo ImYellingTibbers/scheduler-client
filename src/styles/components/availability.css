@@ -27,7 +27,7 @@
 .avail__grid {
   display: grid;
   grid-template-columns: 52px repeat(7, 1fr);
-  gap: 6px;
+  gap: 10px;
   align-items: start;
 }
 .avail__hours {
@@ -36,11 +36,11 @@
   gap: 3px;
   color: #9fb3c8;
   font-size: 12px;
-  justify-items: end;
+  justify-items:center;
   padding-right: 4px;
 }
 .avail__hour {
-  line-height: 18px;
+  line-height: 12px;
 }
 .avail__col {
   display: grid;

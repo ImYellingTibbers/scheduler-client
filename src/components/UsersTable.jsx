@@ -23,7 +23,21 @@ export default function UsersTable() {
             <td>{u.qualifications?.Fluoro ? "✓" : "—"}</td>
             <td>{u.qualifications?.Dexa ? "✓" : "—"}</td>
             <td>
-              <button onClick={() => actions.deleteUser(u._id)}>Delete</button>
+              <button
+                className="btn btn--ghost"
+                onClick={() => {
+                  const idText = u.employeeId ? ` — ID ${u.employeeId}` : "";
+                  if (
+                    window.confirm(
+                      `Are you sure you want to delete "${u.name}"${idText}? This will also remove their assigned shifts.`
+                    )
+                  ) {
+                    actions.deleteUser(u._id);
+                  }
+                }}
+              >
+                Delete
+              </button>
             </td>
           </tr>
         ))}
