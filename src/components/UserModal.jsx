@@ -76,75 +76,92 @@ export default function UserModal({ onClose }) {
       >
         <header className="modal__head">
           <h3>Add employee</h3>
-          <button className="btn btn--ghost" onClick={onClose}>
+          <button
+            type="button"
+            aria-label="Close"
+            className="btn btn--ghost"
+            onClick={onClose}
+          >
             ✕
           </button>
         </header>
 
-        <form onSubmit={submit} className="form">
-          <div className="row">
-            <label style={{ flex: 1 }}>
-              Name
+        <form onSubmit={submit} className="form form--dialog">
+          <div className="formgrid">
+            <label className="field">
+              <span className="field__label">Name</span>
               <input
+                className="field__control"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 autoFocus
                 required
               />
             </label>
-            <label style={{ width: 180 }}>
-              Employee ID
+
+            <label className="field">
+              <span className="field__label">Employee ID</span>
               <input
+                className="field__control"
                 value={empId}
                 onChange={(e) => setEmpId(e.target.value)}
                 aria-invalid={duplicateId ? "true" : "false"}
                 title="Must be unique"
               />
             </label>
-          </div>
 
-          <div className="row" style={{ gap: 16 }}>
-            <label>
-              <input
-                type="checkbox"
-                checked={qualOR}
-                onChange={(e) => setQualOR(e.target.checked)}
-              />{" "}
-              OR
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={qualFluoro}
-                onChange={(e) => setQualFluoro(e.target.checked)}
-              />{" "}
-              Fluoro
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={qualDexa}
-                onChange={(e) => setQualDexa(e.target.checked)}
-              />{" "}
-              Dexa
-            </label>
-          </div>
-
-          <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <input
-              type="checkbox"
-              checked={useDefaultAvail}
-              onChange={(e) => setUseDefaultAvail(e.target.checked)}
-            />
-            Set basic availability to <strong>Mon–Thu 06:00–16:00</strong>{" "}
-            (4×10)
-          </label>
-
-          {duplicateId && (
-            <div className="alert alert--error" style={{ marginTop: 8 }}>
-              Employee ID “{empIdTrim}” already exists.
+            <div className="field field--inline">
+              <span className="field__label">Qualified for</span>
+              <div className="checks">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={qualOR}
+                    onChange={(e) => setQualOR(e.target.checked)}
+                  />{" "}
+                  OR
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={qualFluoro}
+                    onChange={(e) => setQualFluoro(e.target.checked)}
+                  />{" "}
+                  Fluoro
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={qualDexa}
+                    onChange={(e) => setQualDexa(e.target.checked)}
+                  />{" "}
+                  Dexa
+                </label>
+              </div>
             </div>
-          )}
+
+            <label className="field field--inline">
+              <span>
+                <input
+                  type="checkbox"
+                  checked={useDefaultAvail}
+                  onChange={(e) => setUseDefaultAvail(e.target.checked)}
+                />{" "}
+                Set basic availability to <strong>Mon–Thu 06:00–16:00</strong>{" "}
+                (4 × 10hr shifts)
+              </span>
+            </label>
+
+            {duplicateId && (
+              <div
+                className="alert alert--error"
+                role="alert"
+                style={{ gridColumn: "1 / -1" }}
+              >
+                Employee ID “{empIdTrim}” already exists.
+              </div>
+            )}
+          </div>
 
           <div className="modal__actions">
             <button type="button" className="btn" onClick={onClose}>
