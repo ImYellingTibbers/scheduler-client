@@ -1,11 +1,19 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useAppState, availabilityForSpan } from "../state/AppState.jsx";
-import { toISO, addHoursISO, ymd, overlaps } from "../lib/time.js";
+import { toISO, addMinutesISO, ymd, overlaps } from "../lib/time.js";
 
 const QUAL_MAP = { or: "OR", fluoro: "Fluoro", dexa: "Dexa" };
 
 export default function ShiftModal({ date, onClose, existing }) {
   const { state, actions } = useAppState();
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
 
   const [userId, setUserId] = useState(
     existing?.userId || (state.users[0]?._id ?? "")
@@ -14,15 +22,17 @@ export default function ShiftModal({ date, onClose, existing }) {
     existing?.siteId || (state.sites[0]?._id ?? "general")
   );
   const [startTime, setStartTime] = useState(
-    existing ? existing.start.slice(11, 16) : "07:00"
+    existing ? existing.start.slice(11, 16) : "06:00"
   );
   const [duration, setDuration] = useState(
     existing
       ? Math.max(
-          1,
-          Math.round((new Date(existing.end) - new Date(existing.start)) / 36e5)
+          0.5,
+          Math.round(
+            ((new Date(existing.end) - new Date(existing.start)) / 36e5) * 2
+          ) / 2
         )
-      : 10
+      : 10.5
   );
 
   const user = useMemo(
@@ -34,11 +44,30 @@ export default function ShiftModal({ date, onClose, existing }) {
     [state.sites, siteId]
   );
 
-  // Build times
+  // validation
   const startISO = toISO(date, startTime);
-  const endISO = addHoursISO(startISO, Number(duration) || 1);
+  const endISO = addMinutesISO(
+    startISO,
+    Math.round((Number(duration) || 0.5) * 60)
+  );
+  const statuses = user
+    ? availabilityForSpan(user, startISO, Number(duration) || 0.5)
+    : new Set(["red"]);
 
-  // Double-booking detection
+  const needsQual = QUAL_MAP[siteId];
+  const hasQual = !needsQual || user?.qualifications?.[needsQual] === true;
+  const hasRed = statuses.has("red");
+  const hasYellow = statuses.has("yellow");
+
+  const errors = [];
+  if (!user) errors.push("Select a user");
+  if (!site) errors.push("Select a site");
+  if (!hasQual) errors.push(`User lacks qualification for ${site?.name}`);
+
+  const warning =
+    hasYellow && !hasRed ? "This shift intersects yellow (can work) time." : "";
+
+  // double booking
   const conflict = useMemo(() => {
     return state.shifts.find(
       (sh) =>
@@ -53,22 +82,6 @@ export default function ShiftModal({ date, onClose, existing }) {
       conflict.siteId
     : "";
 
-  // Availability status along the span
-  const statuses = user
-    ? availabilityForSpan(user, startISO, Number(duration) || 1)
-    : new Set(["red"]);
-  const hasRed = statuses.has("red");
-  const hasYellow = statuses.has("yellow");
-
-  // Qualification rule for specialized sites
-  const needsQual = QUAL_MAP[siteId];
-  const hasQual = !needsQual || user?.qualifications?.[needsQual] === true;
-
-  // Validation
-  const errors = [];
-  if (!user) errors.push("Select a user");
-  if (!site) errors.push("Select a site");
-  if (!hasQual) errors.push(`User lacks qualification for ${site?.name}`);
   if (conflict) {
     errors.push(
       `User already booked ${conflict.start.slice(11, 16)}–${conflict.end.slice(
@@ -78,8 +91,6 @@ export default function ShiftModal({ date, onClose, existing }) {
     );
   }
 
-  const warning =
-    hasYellow && !hasRed ? "This shift intersects yellow (can work) time." : "";
   const canSave = errors.length === 0 && !hasRed && !conflict;
 
   function onSubmit(e) {
@@ -129,14 +140,15 @@ export default function ShiftModal({ date, onClose, existing }) {
                 required
               />
             </label>
-            <label style={{ width: 110 }}>
+            <label style={{ width: 140 }}>
               Hours
               <input
                 type="number"
-                min="1"
+                min="0.5"
+                step="0.5"
                 max="24"
                 value={duration}
-                onChange={(e) => setDuration(e.target.value)}
+                onChange={(e) => setDuration(Number(e.target.value))}
               />
             </label>
           </div>

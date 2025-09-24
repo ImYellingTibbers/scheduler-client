@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { addHours } from "date-fns";
+import { addMinutes } from "date-fns";
 import { loadState, saveState } from "../lib/storage.js";
 import { makeId } from "../lib/id.js";
 import { ymd, dayKey } from "../lib/time.js";
@@ -7,51 +7,53 @@ import { ymd, dayKey } from "../lib/time.js";
 const AppState = createContext(null);
 
 export function availabilityAt(user, dateObj) {
-  // date-specific override?
   const d = ymd(dateObj);
   const override = (user.overrides || []).find((o) => o.date === d);
   if (override) return override.status;
 
-  const day = dayKey(dateObj); // mon..sun
-  const hour = dateObj.getHours(); // 0..23
-  return user.availabilityTemplate?.[day]?.[hour] || "red";
+  const day = dayKey(dateObj);
+  const h = dateObj.getHours();
+  const m = dateObj.getMinutes();
+  const slot = h * 2 + (m >= 30 ? 1 : 0);
+  return user.availabilityTemplate?.[day]?.[slot] || "red";
 }
 
 export function availabilityForSpan(user, startISO, hours) {
   const seen = new Set();
   let cur = new Date(startISO);
-  for (let i = 0; i < hours; i += 1) {
+  const steps = Math.max(1, Math.round((hours || 0) * 2));
+  for (let i = 0; i < steps; i += 1) {
     seen.add(availabilityAt(user, cur));
-    cur = addHours(cur, 1);
+    cur = addMinutes(cur, 30);
   }
   return seen;
 }
 
 const initialData = {
-  users: [],
+  users: [], // {_id,name,employeeId,qualifications:{OR,Fluoro,Dexa}, availabilityTemplate:{mon..sun:[48]}, overrides:[{date,status}]}
   sites: [
     { _id: "general", name: "General" },
     { _id: "or", name: "OR" },
     { _id: "fluoro", name: "Fluoro" },
     { _id: "dexa", name: "Dexa" },
   ],
-  coverage: [],
-  shifts: [],
-  holidays: [],
+  coverage: [], // {_id,date:'YYYY-MM-DD',siteId,requiredCount}
+  shifts: [], // {_id,userId,siteId,start,end,status}
+  holidays: [], // from API
   timezone: "America/Denver",
   coverageDefaults: { general: 1, or: 2, fluoro: 3, dexa: 4 },
 };
 
 function normalizeTemplate() {
-  const base = Array(24).fill("yellow");
+  const blank = Array(48).fill("yellow");
   return {
-    mon: [...base],
-    tue: [...base],
-    wed: [...base],
-    thu: [...base],
-    fri: [...base],
-    sat: [...base],
-    sun: [...base],
+    mon: [...blank],
+    tue: [...blank],
+    wed: [...blank],
+    thu: [...blank],
+    fri: [...blank],
+    sat: [...blank],
+    sun: [...blank],
   };
 }
 
@@ -61,20 +63,76 @@ export function AppStateProvider({ children, holidaysFromApi = [] }) {
     saved ?? { ...initialData, holidays: holidaysFromApi }
   );
 
-  // keep holidays refreshed from API
+  useEffect(() => {
+    setState((s) => {
+      if (!s?.users?.length) return s;
+      let changed = false;
+      const users = s.users.map((u) => {
+        const tpl = u.availabilityTemplate || {};
+        const days = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+        let updated = false;
+        const out = {};
+        for (const d of days) {
+          const arr = tpl[d];
+          if (Array.isArray(arr) && arr.length === 24) {
+            const doubled = [];
+            for (let i = 0; i < 24; i += 1) {
+              const v = arr[i] ?? "red";
+              doubled.push(v, v);
+            }
+            out[d] = doubled;
+            updated = true;
+          } else if (Array.isArray(arr)) {
+            out[d] = arr;
+          }
+        }
+        if (updated) {
+          changed = true;
+          return { ...u, availabilityTemplate: { ...tpl, ...out } };
+        }
+        return u;
+      });
+      return changed ? { ...s, users } : s;
+    });
+  }, []);
+
   useEffect(() => {
     if (holidaysFromApi?.length) {
       setState((s) => ({ ...s, holidays: holidaysFromApi }));
     }
   }, [holidaysFromApi]);
 
-  // persist to localStorage
   useEffect(() => saveState(state), [state]);
 
-  // actions (stable via useMemo; safe to capture setState)
   const actions = useMemo(
     () => ({
       addUser(user) {
+        // Ensure provided template is 48-slot (handles any legacy 24-slot objects)
+        function to48(tpl) {
+          if (!tpl) return null;
+          const days = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+          let changed = false;
+          const out = {};
+          for (const d of days) {
+            const arr = tpl[d];
+            if (Array.isArray(arr) && arr.length === 24) {
+              const doubled = [];
+              for (let i = 0; i < 24; i += 1) {
+                const v = arr[i] ?? "red";
+                doubled.push(v, v);
+              }
+              out[d] = doubled;
+              changed = true;
+            } else if (Array.isArray(arr)) {
+              out[d] = arr;
+            }
+          }
+          return changed ? { ...tpl, ...out } : tpl;
+        }
+
+        const incomingTpl = user.availabilityTemplate || normalizeTemplate();
+        const tpl48 = to48(incomingTpl) || normalizeTemplate();
+
         setState((s) => ({
           ...s,
           users: [
@@ -88,8 +146,7 @@ export function AppStateProvider({ children, holidaysFromApi = [] }) {
                 Fluoro: !!user.qualFluoro,
                 Dexa: !!user.qualDexa,
               },
-              availabilityTemplate:
-                user.availabilityTemplate || normalizeTemplate(),
+              availabilityTemplate: tpl48,
               overrides: [],
             },
           ],
@@ -113,18 +170,19 @@ export function AppStateProvider({ children, holidaysFromApi = [] }) {
             const i = next.findIndex(
               (c) => c.date === d && c.siteId === siteId
             );
-            if (i >= 0)
+            if (i >= 0) {
               next[i] = {
                 ...next[i],
                 requiredCount: Number(requiredCount) || 0,
               };
-            else
+            } else {
               next.push({
                 _id: makeId("cov"),
                 date: d,
                 siteId,
                 requiredCount: Number(requiredCount) || 0,
               });
+            }
           }
           return { ...s, coverage: next };
         });
@@ -196,7 +254,7 @@ export function AppStateProvider({ children, holidaysFromApi = [] }) {
         }));
       },
 
-      setAvailabilityCell(userId, day, hour, nextState) {
+      setAvailabilityCell(userId, day, slot, nextState) {
         setState((s) => ({
           ...s,
           users: s.users.map((u) => {
@@ -206,7 +264,7 @@ export function AppStateProvider({ children, holidaysFromApi = [] }) {
               availabilityTemplate: { ...u.availabilityTemplate },
             };
             const arr = [...(copy.availabilityTemplate[day] ?? [])];
-            arr[hour] = nextState;
+            arr[slot] = nextState;
             copy.availabilityTemplate[day] = arr;
             return copy;
           }),

@@ -1,13 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppState } from "../state/AppState.jsx";
 
 const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const SLOTS = 48; // 30-min slots
 
-function hourLabel(h) {
-  const ampm = h < 12 ? "a" : "p";
-  const hour12 = h % 12 === 0 ? 12 : h % 12;
-  return `${hour12}${ampm}`;
+function hourLabel24(h) {
+  return h.toString().padStart(2, "0") + ":00";
 }
 
 export default function AvailabilityMatrix({ user }) {
@@ -16,9 +15,9 @@ export default function AvailabilityMatrix({ user }) {
   const paintingRef = useRef(false);
 
   useEffect(() => {
-    function up() {
+    const up = () => {
       paintingRef.current = false;
-    }
+    };
     window.addEventListener("mouseup", up);
     window.addEventListener("mouseleave", up);
     return () => {
@@ -29,20 +28,18 @@ export default function AvailabilityMatrix({ user }) {
 
   if (!user) return null;
 
-  function paint(day, hour) {
-    actions.setAvailabilityCell(user._id, day, hour, mode);
+  function paint(day, slot) {
+    actions.setAvailabilityCell(user._id, day, slot, mode);
   }
 
   return (
     <section className="avail">
-      {/* toolbar */}
       <div className="avail__legend" role="radiogroup" aria-label="Paint mode">
         <button
           type="button"
           className={`legend ${mode === "green" ? "legend--green" : ""}`}
           aria-pressed={mode === "green"}
           onClick={() => setMode("green")}
-          title="Preferred"
         >
           Preferred
         </button>
@@ -51,7 +48,6 @@ export default function AvailabilityMatrix({ user }) {
           className={`legend ${mode === "yellow" ? "legend--yellow" : ""}`}
           aria-pressed={mode === "yellow"}
           onClick={() => setMode("yellow")}
-          title="Can work"
         >
           Can work
         </button>
@@ -60,47 +56,46 @@ export default function AvailabilityMatrix({ user }) {
           className={`legend ${mode === "red" ? "legend--red" : ""}`}
           aria-pressed={mode === "red"}
           onClick={() => setMode("red")}
-          title="Cannot"
         >
           Cannot
         </button>
       </div>
 
       <div className="avail__grid">
-        {/* hours column */}
+        {/* hour labels (00..23), each spans 2 rows */}
         <div className="avail__hours">
-          <div />
-          {/* header spacer */}
-          {Array.from({ length: 25 }, (_, h) => (
-            <div key={h} className="avail__hour" aria-hidden="true">
-              {hourLabel(h)}
+          <div /> {/* header spacer */}
+          {Array.from({ length: 24 }, (_, h) => (
+            <div key={h} className="avail__hour">
+              {hourLabel24(h)}
             </div>
           ))}
         </div>
 
-        {/* 7 day columns */}
         {DAYS.map((day, i) => {
           const col = user.availabilityTemplate?.[day] || [];
           return (
             <div key={day} className="avail__col">
               <div className="avail__daylabel">{DAY_LABELS[i]}</div>
-              {Array.from({ length: 24 }, (_, h) => {
-                const val = col[h] || "red";
+              {Array.from({ length: SLOTS }, (_, slot) => {
+                const val = col[slot] || "red";
                 return (
                   <div
-                    key={`${day}-${h}`}
+                    key={`${day}-${slot}`}
                     className={`avail__cell avail--${val}`}
                     onMouseDown={(e) => {
                       e.preventDefault();
                       paintingRef.current = true;
-                      paint(day, h);
+                      paint(day, slot);
                     }}
                     onMouseEnter={() => {
-                      if (paintingRef.current) paint(day, h);
+                      if (paintingRef.current) paint(day, slot);
                     }}
-                    onClick={() => paint(day, h)} // single click also paints
+                    onClick={() => paint(day, slot)}
                     role="button"
-                    aria-label={`${DAY_LABELS[i]} ${h}:00 set ${mode}`}
+                    aria-label={`${DAY_LABELS[i]} ${Math.floor(slot / 2)}:${
+                      slot % 2 ? "30" : "00"
+                    } set ${mode}`}
                     tabIndex={0}
                   />
                 );

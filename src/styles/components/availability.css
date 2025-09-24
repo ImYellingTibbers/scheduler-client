@@ -1,6 +1,7 @@
 .avail {
   margin-top: 16px;
 }
+
 .avail__legend {
   display: flex;
   gap: 12px;
@@ -23,28 +24,32 @@
   background: #3d1a1a;
 }
 
-/* Hours column + 7 day columns */
+/* Grid: hour column + 7 day columns */
 .avail__grid {
   display: grid;
   grid-template-columns: 52px repeat(7, 1fr);
-  gap: 10px;
+  gap: 6px;
   align-items: start;
 }
+
 .avail__hours {
+  margin-top: 8px;
   display: grid;
-  grid-template-rows: auto repeat(24, 18px);
+  grid-template-rows: auto repeat(48, 16px);
   gap: 3px;
   color: #9fb3c8;
   font-size: 12px;
-  justify-items:center;
+  justify-items: end;
   padding-right: 4px;
 }
 .avail__hour {
-  line-height: 12px;
+  grid-row: span 2;
+  display: flex;
+  align-items: center;
 }
 .avail__col {
   display: grid;
-  grid-template-rows: auto repeat(24, 18px);
+  grid-template-rows: auto repeat(48, 16px);
   gap: 3px;
 }
 .avail__daylabel {

@@ -55,3 +55,9 @@ export function ymdListFromRange(startDate, endDate) {
   const days = eachDayOfInterval({ start: startDate, end: endDate });
   return days.map((d) => ymd(d));
 }
+
+export function addMinutesISO(startISO, minutes) {
+  const d = new Date(startISO);
+  d.setMinutes(d.getMinutes() + minutes);
+  return d.toISOString();
+}

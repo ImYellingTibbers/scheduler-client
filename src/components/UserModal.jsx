@@ -1,20 +1,25 @@
 import { useMemo, useState, useEffect } from "react";
 import { useAppState } from "../state/AppState.jsx";
 
-function makeTemplateFourByTen() {
-  const yellow = () => Array(24).fill("yellow");
+// Build a 48-slot (30-min) weekly template with Mon–Thu 06:00–16:30 green
+function makeTemplateFourByTen48() {
+  const makeDay = () => Array(48).fill("yellow"); // base = can work
   const tpl = {
-    mon: yellow(),
-    tue: yellow(),
-    wed: yellow(),
-    thu: yellow(),
-    fri: yellow(),
-    sat: yellow(),
-    sun: yellow(),
+    mon: makeDay(),
+    tue: makeDay(),
+    wed: makeDay(),
+    thu: makeDay(),
+    fri: makeDay(),
+    sat: makeDay(),
+    sun: makeDay(),
   };
-  // Mon–Thu 06:00–16:00 (10 hours: 6..15) as green (preferred)
+  // slots: 06:00 = 12, 16:30 end means 21 slots total => last slot index = 32
+  const startSlot = 6 * 2; // 12
+  const endSlotInclusive = 16 * 2; // 32 (covers 16:00–16:30)
   for (const d of ["mon", "tue", "wed", "thu"]) {
-    for (let h = 6; h < 16; h += 1) tpl[d][h] = "green";
+    for (let s = startSlot; s <= endSlotInclusive; s += 1) {
+      tpl[d][s] = "green";
+    }
   }
   return tpl;
 }
@@ -24,9 +29,9 @@ export default function UserModal({ onClose }) {
 
   // ESC to close
   useEffect(() => {
-    function onKey(e) {
+    const onKey = (e) => {
       if (e.key === "Escape") onClose();
-    }
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
@@ -59,7 +64,7 @@ export default function UserModal({ onClose }) {
       qualFluoro,
       qualDexa,
       availabilityTemplate: useDefaultAvail
-        ? makeTemplateFourByTen()
+        ? makeTemplateFourByTen48()
         : undefined,
     });
     onClose();
@@ -147,8 +152,8 @@ export default function UserModal({ onClose }) {
                   checked={useDefaultAvail}
                   onChange={(e) => setUseDefaultAvail(e.target.checked)}
                 />{" "}
-                Set basic availability to <strong>Mon–Thu 06:00–16:00</strong>{" "}
-                (4 × 10hr shifts)
+                Set basic availability to <strong>Mon–Thu 06:00–16:30</strong>{" "}
+                (4 × 10.5 hr)
               </span>
             </label>
 
