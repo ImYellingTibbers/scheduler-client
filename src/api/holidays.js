@@ -1,4 +1,4 @@
-export function getPublicHolidays(year, countryCode = 'US') {
+export function getPublicHolidays(year, countryCode = "US") {
   const url = `https://date.nager.at/api/v3/PublicHolidays/${year}/${countryCode}`;
   return fetch(url)
     .then((res) => {
@@ -6,7 +6,7 @@ export function getPublicHolidays(year, countryCode = 'US') {
       return res.json();
     })
     .catch((err) => {
-      console.error('getPublicHolidays error', err);
+      console.error("getPublicHolidays error", err);
       return [];
     });
 }
