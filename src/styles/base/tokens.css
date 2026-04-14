@@ -1,0 +1,28 @@
+:root {
+  /* colors */
+  --bg: #0b0d12;
+  --panel: #11141a;
+  --surface: #161b22;
+  --border: #2a3040;
+  --text: #e6e9ef;
+  --muted: #aab2c0;
+  --ok: #22c55e; /* green */
+  --warn: #f59e0b; /* amber */
+  --stop: #ef4444; /* red */
+  --info: #60a5fa; /* blue */
+  --focus: #7dd3fc;
+
+  /* spacing & radius */
+  --r: 10px;
+  --shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+
+  /* type scale */
+  --fs-xxl: clamp(24px, 2vw, 28px);
+  --fs-xl: 22px;
+  --fs-lg: 18px;
+  --fs-md: 16px;
+  --fs-sm: 14px;
+
+  --family-ui: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+    "Noto Sans", sans-serif;
+}

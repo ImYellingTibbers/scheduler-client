@@ -1,0 +1,10 @@
+.page--about h3 {
+  margin-top: 18px;
+}
+.page--about ul,
+.page--about ol {
+  margin-top: 8px;
+}
+.page--about .tbl code {
+  white-space: nowrap;
+}
